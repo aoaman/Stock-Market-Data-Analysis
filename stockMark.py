@@ -1,10 +1,15 @@
 """
 Author: Asher Adighije
 Date: 2025-02-08
-Description: This program is a simple stock market analysis tool that uses the NASDAQ API to get stock data for a given ticker symbol. The program calculates the mean and median closing prices for the last 5 years and prints the results to the console.
+Description: This program is a simple stock market analysis tool that uses the NASDAQ API to get stock data for 
+a given ticker symbol. The program calculates the mean and median closing prices for the last 5 years and prints the results to the console.
 
 Sources: 
-ChatGPT: helped with debugging the code specifically the with the fe
+ChatGPT: helped with debugging the code specifically the with the fetching of the data from the API
+Youtube: helped with understanding the requests module and how to use it to fetch data from an API as well as
+how to use visual studio code to commit to github
+StackOverflow: helped with the proper syntax for the data
+GeeksforGeeks: helped with understanding the statistics module and how to use it to calculate the mean and median
 """
 import requests
 import json
@@ -64,3 +69,25 @@ def download_data(ticker: str) -> dict:
             if attempt == retries - 1:
                 return {"error": str(e), "ticker": ticker}
             time.sleep(2)
+
+def main():
+    if len(sys.argv) < 2: # Check if the user has provided ticker symbols
+        print("Usage: python3 stock2.py <TICKER1> <TICKER2> ...")
+        sys.exit(1) # Exit the program if no ticker symbols are provided
+
+    tickers = sys.argv[1:] # Get the ticker symbols from the command line arguments
+    all_data = []
+
+    for ticker in tickers:
+        data = download_data(ticker)
+        all_data.append(data)
+    # Print the results to a JSON file
+    try:
+        with open('stocks.json', 'w') as f:
+            json.dump(all_data, f, indent=4)
+        print("Data successfully written to stocks.json")
+    except IOError as e:
+        print(f"Error writing to file: {e}")
+# Run the main function
+if __name__ == "__main__":
+    main()
